@@ -1,0 +1,6 @@
+{
+  "name": "WorkDey",
+  "description": "AI-powered career development, job discovery and recruitment platform. Talent, found. Careers, built.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

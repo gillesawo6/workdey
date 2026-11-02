@@ -1,0 +1,202 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0B1C2F;
+  --color-slate-custom: #3D4A5C;
+  --color-muted-custom: #5A6779;
+  --color-line: #E2E7EE;
+  --color-canvas: #F4F6F9;
+  --color-surface: #FFFFFF;
+
+  --color-teal-600: #0B7F7A;
+  --color-teal-500: #14A89E;
+  --color-teal-50: #E6F5F3;
+
+  --color-blue-600: #2552C2;
+  --color-blue-50: #EAF0FC;
+
+  --color-admin-surface: #111D2C;
+  --color-admin-card: #162436;
+  --color-admin-line: #223247;
+  --color-admin-text: #E7ECF3;
+  --color-graphite: #1D2430;
+  --color-amber-custom: #E8A317;
+
+  --color-success-custom: #1A7F4B;
+  --color-danger-custom: #B42318;
+
+  --font-display: var(--font-bricolage), system-ui, sans-serif;
+  --font-body: var(--font-hanken), system-ui, sans-serif;
+}
+
+@layer utilities {
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Glassmorphism Levels from PDF Page 6 */
+  .glass-1 {
+    background-color: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.70);
+  }
+
+  .glass-2 {
+    background-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.70);
+  }
+
+  .glass-3 {
+    background-color: rgba(255, 255, 255, 0.56);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.60);
+  }
+
+  /* Elevation tokens e0 to e4 from PDF Page 6 */
+  .elevation-e0 {
+    box-shadow: none;
+  }
+
+  .elevation-e1 {
+    box-shadow: 0 1px 3px rgba(11, 28, 47, 0.05), 0 1px 2px rgba(11, 28, 47, 0.03);
+  }
+
+  .elevation-e2 {
+    box-shadow: 0 4px 12px rgba(11, 28, 47, 0.08), 0 2px 4px rgba(11, 28, 47, 0.04);
+  }
+
+  .elevation-e3 {
+    box-shadow: 0 12px 28px rgba(11, 28, 47, 0.12), 0 4px 8px rgba(11, 28, 47, 0.06);
+  }
+
+  .elevation-e4 {
+    box-shadow: 0 24px 48px rgba(11, 28, 47, 0.16), 0 8px 16px rgba(11, 28, 47, 0.08);
+  }
+
+  /* Admin dark surface with 1px top highlight */
+  .admin-panel {
+    background-color: #162436;
+    border: 1px solid #223247;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  /* Ambient lighting glows */
+  .ambient-glow-teal {
+    background: radial-gradient(circle at 60% 40%, rgba(20, 168, 158, 0.16) 0%, rgba(11, 127, 122, 0.04) 45%, transparent 70%);
+  }
+
+  .ambient-glow-blue {
+    background: radial-gradient(circle at 60% 40%, rgba(37, 82, 194, 0.14) 0%, rgba(37, 82, 194, 0.03) 45%, transparent 70%);
+  }
+
+  /* Liquid Glass (Selective Optical Highlight for floating bars & controls) */
+  .liquid-glass {
+    background-color: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.95), 0 8px 30px 0 rgba(11, 28, 47, 0.07);
+  }
+
+  .liquid-glass-dark {
+    background-color: rgba(17, 29, 44, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.2), 0 10px 32px 0 rgba(0, 0, 0, 0.35);
+  }
+
+  /* Claymorphism (Selective Tactile Elements for small widgets & scores) */
+  .clay-widget {
+    background-color: #ffffff;
+    border-radius: 14px;
+    border: 1px solid rgba(226, 231, 238, 0.85);
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.95), inset 0 -2px 4px rgba(11, 28, 47, 0.04), 0 8px 20px rgba(11, 28, 47, 0.05);
+  }
+
+  .clay-chip {
+    border-radius: 8px;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.85), 0 2px 5px rgba(11, 28, 47, 0.04);
+  }
+
+  /* Mobile Touch & Layout Ergonomics */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .safe-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom, 16px), 16px);
+  }
+
+  .safe-top {
+    padding-top: max(env(safe-area-inset-top, 0px), 0px);
+  }
+
+  /* Micro-interactions from PDF Page 5 */
+  .btn-hover-arrow:hover .btn-arrow {
+    transform: translateX(3px);
+  }
+
+  .btn-pressed:active {
+    transform: translateY(1px);
+  }
+
+  /* 3px focus ring without layout shift */
+  .focus-ring-teal:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(11, 127, 122, 0.2);
+    border-color: #0B7F7A;
+  }
+
+  .focus-ring-blue:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 82, 194, 0.2);
+    border-color: #2552C2;
+  }
+}
+
+/* Subtle Hero card float from PDF Page 5 (5px over 7s) */
+@keyframes heroFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-hero-float {
+  animation: heroFloat 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-float {
+    animation: none !important;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--color-ink);
+  background-color: var(--color-canvas);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
