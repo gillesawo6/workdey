@@ -139,9 +139,9 @@ export default function AdminAIManagementPage() {
           </div>
           <div>
             <h4 className="text-sm font-bold text-white font-mono">
-              {healthData?.model || 'gemini-3.8-flash'}
+              {healthData?.model || 'gpt-4o-mini'}
             </h4>
-            <p className="text-[11px] text-[#A0AEC0]">Provider: {healthData?.provider || 'gemini'}</p>
+            <p className="text-[11px] text-[#A0AEC0]">Provider: {healthData?.provider || 'openai'}</p>
           </div>
         </div>
 

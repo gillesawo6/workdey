@@ -44,11 +44,11 @@ export function TrustSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white text-[#3D4A5C] border border-[#E2E7EE] shadow-sm mb-3">
-            <Lock className="w-3.5 h-3.5 text-[#0B7F7A]" />
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#0B7F7A] mb-3">
+            <Lock className="w-3.5 h-3.5" />
             <span>Integrity & Governance</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0B1C2F] font-display tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0B1C2F] font-display tracking-tight text-balance">
             Trust is built into every layer
           </h2>
           <p className="text-xs sm:text-sm text-[#5A6779] mt-2 leading-relaxed">

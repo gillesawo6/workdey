@@ -29,9 +29,9 @@ export function Card({
 
   const glassClass = glass
     ? {
-        1: 'bg-white/60 backdrop-blur-md border border-white/60',
-        2: 'bg-white/75 backdrop-blur-lg border border-white/80',
-        3: 'bg-white/90 backdrop-blur-xl border border-white',
+        1: 'glass-1',
+        2: 'glass-2',
+        3: 'glass-3',
       }[glass]
     : 'bg-white border border-[#E2E7EE]';
 

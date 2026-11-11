@@ -1,3 +1,4 @@
+import OpenAI from 'openai';
 import { GoogleGenAI } from '@google/genai';
 import {
   AIProviderName,
@@ -21,7 +22,8 @@ import {
 } from './types';
 
 // Default configuration
-const DEFAULT_MODEL: AIModelName = 'gemini-3.8-flash';
+const DEFAULT_OPENAI_MODEL = 'gpt-4o-mini';
+const DEFAULT_GEMINI_MODEL: AIModelName = 'gemini-3.8-flash';
 const REQUEST_TIMEOUT_MS = 25000;
 const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 40;
@@ -32,8 +34,6 @@ const rateLimitBuckets = new Map<string, { count: number; windowStart: number }>
 
 export class AIGateway {
   private static instance: AIGateway;
-  private providerName: AIProviderName = 'gemini';
-  private modelName: string = DEFAULT_MODEL;
 
   private constructor() {}
 
@@ -45,11 +45,48 @@ export class AIGateway {
   }
 
   /**
-   * Checks whether the underlying provider has a valid key configured.
+   * Checks whether the OpenAI API key is configured.
    */
-  public hasCredentials(): boolean {
+  public hasOpenAICredentials(): boolean {
+    const key = process.env.OPENAI_API_KEY;
+    return !!key && key.trim() !== '' && key !== 'MY_OPENAI_API_KEY';
+  }
+
+  /**
+   * Checks whether the Gemini API key is configured.
+   */
+  public hasGeminiCredentials(): boolean {
     const key = process.env.GEMINI_API_KEY;
     return !!key && key.trim() !== '' && key !== 'MY_GEMINI_API_KEY';
+  }
+
+  /**
+   * Checks whether any valid live AI provider credential is present.
+   */
+  public hasCredentials(): boolean {
+    return this.hasOpenAICredentials() || this.hasGeminiCredentials();
+  }
+
+  /**
+   * Identifies the primary active AI provider based on environment configuration.
+   */
+  public getActiveProvider(): AIProviderName {
+    if (this.hasOpenAICredentials()) return 'openai';
+    if (this.hasGeminiCredentials()) return 'gemini';
+    return 'mock';
+  }
+
+  /**
+   * Resolves the active model name based on provider configuration.
+   */
+  public getActiveModel(): string {
+    if (this.hasOpenAICredentials()) {
+      return process.env.OPENAI_MODEL || DEFAULT_OPENAI_MODEL;
+    }
+    if (this.hasGeminiCredentials()) {
+      return process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
+    }
+    return 'deterministic_engine';
   }
 
   /**
@@ -59,6 +96,8 @@ export class AIGateway {
     provider: AIProviderName;
     model: string;
     hasCredentials: boolean;
+    hasOpenAI: boolean;
+    hasGemini: boolean;
     uptimeSeconds: number;
     totalRequests: number;
     successRatePct: number;
@@ -73,14 +112,16 @@ export class AIGateway {
         : 0;
 
     return {
-      provider: this.providerName,
-      model: this.modelName,
+      provider: this.getActiveProvider(),
+      model: this.getActiveModel(),
       hasCredentials: this.hasCredentials(),
+      hasOpenAI: this.hasOpenAICredentials(),
+      hasGemini: this.hasGeminiCredentials(),
       uptimeSeconds: Math.floor(process.uptime ? process.uptime() : 0),
       totalRequests: total,
       successRatePct: total > 0 ? Math.round((successes / total) * 100) : 100,
       averageLatencyMs: avgLatency,
-      recentLogs: usageLogBuffer.slice(-15).reverse(),
+      recentLogs: usageLogBuffer.slice(-20).reverse(),
     };
   }
 
@@ -174,6 +215,58 @@ export class AIGateway {
   }
 
   /**
+   * Low-level raw OpenAI call with timeout, response_format (JSON), and 1-attempt retry.
+   */
+  private async executeOpenAIPrompt(
+    prompt: string,
+    systemInstruction?: string,
+    temperature: number = 0.2,
+    jsonMode: boolean = false
+  ): Promise<{ text: string; tokens?: number }> {
+    const apiKey = process.env.OPENAI_API_KEY!.trim();
+    const model = process.env.OPENAI_MODEL || DEFAULT_OPENAI_MODEL;
+    const openai = new OpenAI({ apiKey, timeout: REQUEST_TIMEOUT_MS });
+
+    const runCall = async () => {
+      const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [];
+      if (systemInstruction) {
+        messages.push({ role: 'system', content: systemInstruction });
+      }
+      messages.push({ role: 'user', content: prompt });
+
+      const completion = await openai.chat.completions.create({
+        model,
+        messages,
+        temperature,
+        ...(jsonMode ? { response_format: { type: 'json_object' as const } } : {}),
+      });
+
+      const text = completion.choices[0]?.message?.content || '';
+      const tokens =
+        completion.usage?.total_tokens ||
+        Math.round((prompt.length + text.length) / 4);
+
+      return { text, tokens };
+    };
+
+    try {
+      return await runCall();
+    } catch (firstErr: any) {
+      const isRetryable =
+        firstErr?.status === 429 ||
+        firstErr?.status === 503 ||
+        firstErr?.code === 'ETIMEDOUT' ||
+        firstErr?.name === 'APIConnectionTimeoutError' ||
+        firstErr?.message?.includes('fetch failed');
+
+      if (!isRetryable) throw firstErr;
+
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      return await runCall();
+    }
+  }
+
+  /**
    * Low-level raw Gemini call with timeout and 1-attempt retry with backoff.
    */
   private async executeGeminiPrompt(
@@ -187,6 +280,7 @@ export class AIGateway {
     }
 
     const ai = new GoogleGenAI({ apiKey });
+    const model = process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
 
     const runCall = async () => {
       const controller = new AbortController();
@@ -194,7 +288,7 @@ export class AIGateway {
 
       try {
         const response = await ai.models.generateContent({
-          model: this.modelName,
+          model,
           contents: prompt,
           config: systemInstruction
             ? {
@@ -214,7 +308,6 @@ export class AIGateway {
     try {
       return await runCall();
     } catch (firstErr: any) {
-      // Retry once on transient network or rate-limit errors
       const isRetryable =
         firstErr?.status === 429 ||
         firstErr?.status === 503 ||
@@ -226,6 +319,40 @@ export class AIGateway {
       await new Promise((resolve) => setTimeout(resolve, 800));
       return await runCall();
     }
+  }
+
+  /**
+   * Unified Prompt Executor: Primary OpenAI, Secondary Gemini, with telemetry.
+   */
+  private async executeUnifiedPrompt(
+    prompt: string,
+    systemInstruction?: string,
+    temperature: number = 0.2,
+    jsonMode: boolean = false
+  ): Promise<{ text: string; provider: AIProviderName; model: string; tokens: number }> {
+    if (this.hasOpenAICredentials()) {
+      const model = process.env.OPENAI_MODEL || DEFAULT_OPENAI_MODEL;
+      const res = await this.executeOpenAIPrompt(prompt, systemInstruction, temperature, jsonMode);
+      return {
+        text: res.text,
+        provider: 'openai',
+        model,
+        tokens: res.tokens || Math.round((prompt.length + res.text.length) / 4),
+      };
+    }
+
+    if (this.hasGeminiCredentials()) {
+      const model = process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
+      const text = await this.executeGeminiPrompt(prompt, systemInstruction, temperature);
+      return {
+        text,
+        provider: 'gemini',
+        model,
+        tokens: Math.round((prompt.length + text.length) / 4),
+      };
+    }
+
+    throw new Error('NO_AI_CREDENTIALS: No OpenAI or Gemini API key is configured.');
   }
 
   /**
@@ -302,8 +429,8 @@ Candidate (Sanitized Profile):
 ${JSON.stringify(sanitizedTalent, null, 2)}`;
 
     try {
-      const raw = await this.executeGeminiPrompt(promptText, systemPrompt, 0.1);
-      const parsed = this.parseStructuredJSON<any>(raw, null);
+      const executed = await this.executeUnifiedPrompt(promptText, systemPrompt, 0.1, true);
+      const parsed = this.parseStructuredJSON<any>(executed.text, null);
 
       if (!parsed || typeof parsed.match_score !== 'number') {
         throw new Error('Invalid JSON format returned from AI model');
@@ -330,11 +457,11 @@ ${JSON.stringify(sanitizedTalent, null, 2)}`;
 
       this.recordUsage({
         feature: 'job_match',
-        model: this.modelName,
-        provider: 'gemini',
+        model: executed.model,
+        provider: executed.provider,
         duration_ms: Date.now() - startTime,
         status: 'success',
-        estimated_tokens: Math.round((promptText.length + raw.length) / 4),
+        estimated_tokens: executed.tokens,
       });
 
       return result;
@@ -344,8 +471,8 @@ ${JSON.stringify(sanitizedTalent, null, 2)}`;
       fallback.ai_status = 'offline_fallback';
       this.recordUsage({
         feature: 'job_match',
-        model: this.modelName,
-        provider: 'gemini',
+        model: this.getActiveModel(),
+        provider: this.getActiveProvider(),
         duration_ms: Date.now() - startTime,
         status: 'error',
         error: err?.message,
@@ -378,7 +505,7 @@ CRITICAL ETHICS:
 - Never evaluate or infer protected characteristics (gender, age, marital status, religion, ethnicity).
 - Never make autonomous hiring or rejection decisions.
 - Formulate structured suggested interview questions so human hiring managers can verify competencies.
-Output MUST be valid JSON only with NO markdown fences.
+- Output MUST be valid JSON only with NO markdown fences.
 JSON Schema:
 {
   "match_score": number,
@@ -398,8 +525,8 @@ Candidate Qualifications:
 ${JSON.stringify(req.candidate, null, 2)}`;
 
     try {
-      const raw = await this.executeGeminiPrompt(promptText, systemPrompt, 0.1);
-      const parsed = this.parseStructuredJSON<any>(raw, null);
+      const executed = await this.executeUnifiedPrompt(promptText, systemPrompt, 0.1, true);
+      const parsed = this.parseStructuredJSON<any>(executed.text, null);
 
       if (!parsed || typeof parsed.match_score !== 'number') {
         throw new Error('Invalid JSON format from candidate matching model');
@@ -421,10 +548,11 @@ ${JSON.stringify(req.candidate, null, 2)}`;
 
       this.recordUsage({
         feature: 'candidate_match',
-        model: this.modelName,
-        provider: 'gemini',
+        model: executed.model,
+        provider: executed.provider,
         duration_ms: Date.now() - startTime,
         status: 'success',
+        estimated_tokens: executed.tokens,
       });
 
       return result;
@@ -433,8 +561,8 @@ ${JSON.stringify(req.candidate, null, 2)}`;
       fallback.ai_status = 'offline_fallback';
       this.recordUsage({
         feature: 'candidate_match',
-        model: this.modelName,
-        provider: 'gemini',
+        model: this.getActiveModel(),
+        provider: this.getActiveProvider(),
         duration_ms: Date.now() - startTime,
         status: 'error',
         error: err?.message,
@@ -451,7 +579,7 @@ ${JSON.stringify(req.candidate, null, 2)}`;
 
     if (!this.hasCredentials()) {
       return {
-        text: `The WorkDey AI Gateway is currently in standby mode because a valid GEMINI_API_KEY has not been provisioned in the environment.\n\nTo enable live conversational career coaching, mock interview practice, and CV generation, configure the GEMINI_API_KEY in the Secrets panel.\n\nIn the meantime, you can explore the Career Roadmap and Skill Gap Benchmarks which operate with full deterministic calculation.`,
+        text: `The WorkDey AI Gateway is currently in standby mode because no AI API key (OPENAI_API_KEY or GEMINI_API_KEY) has been configured in the server environment.\n\nTo activate conversational career coaching, mock interview practice, and CV generation, configure your OPENAI_API_KEY in the environment.\n\nIn the meantime, deterministic features (Skill Gap Benchmarks, Career Roadmap, and CV Templates) remain fully operational.`,
         mode: req.mode,
         is_ai_powered: false,
         ai_status: 'offline_fallback',
@@ -466,6 +594,7 @@ Key Guidelines:
 - If mode is 'mock_interview': act as a polite but rigorous interviewer. Ask targeted behavioral and technical questions, evaluate the user's responses, and give constructive feedback with rating out of 10.
 - If mode is 'salary_negotiation': provide realistic market ranges in XAF, negotiation scripts, and bonus/benefit talking points.
 - If mode is 'cv_critique': identify measurable impact gaps, strong action verbs, and clarity issues.
+- If mode is 'career_transition': analyze transferable skills, map concrete bridges between industries, and give a 90-day step plan.
 - Tone: Empathetic, ambitious, pragmatic, professional. Use concise formatting with bullet points.`;
 
     const promptText = `User Context:
@@ -478,18 +607,19 @@ User Message:
 ${req.user_message}`;
 
     try {
-      const text = await this.executeGeminiPrompt(promptText, systemPrompt, 0.4);
+      const executed = await this.executeUnifiedPrompt(promptText, systemPrompt, 0.4, false);
 
       this.recordUsage({
         feature: 'coach',
-        model: this.modelName,
-        provider: 'gemini',
+        model: executed.model,
+        provider: executed.provider,
         duration_ms: Date.now() - startTime,
         status: 'success',
+        estimated_tokens: executed.tokens,
       });
 
       return {
-        text,
+        text: executed.text,
         mode: req.mode,
         is_ai_powered: true,
         ai_status: 'live',
@@ -497,8 +627,8 @@ ${req.user_message}`;
     } catch (err: any) {
       this.recordUsage({
         feature: 'coach',
-        model: this.modelName,
-        provider: 'gemini',
+        model: this.getActiveModel(),
+        provider: this.getActiveProvider(),
         duration_ms: Date.now() - startTime,
         status: 'error',
         error: err?.message,
@@ -571,8 +701,8 @@ Current Verified Skills:
 ${JSON.stringify(req.current_skills, null, 2)}`;
 
     try {
-      const raw = await this.executeGeminiPrompt(promptText, systemPrompt, 0.1);
-      const parsed = this.parseStructuredJSON<any>(raw, null);
+      const executed = await this.executeUnifiedPrompt(promptText, systemPrompt, 0.1, true);
+      const parsed = this.parseStructuredJSON<any>(executed.text, null);
 
       if (!parsed || typeof parsed.overall_readiness_pct !== 'number') {
         throw new Error('Invalid JSON format from Skill Gap Engine');
@@ -592,10 +722,11 @@ ${JSON.stringify(req.current_skills, null, 2)}`;
 
       this.recordUsage({
         feature: 'skill_gap',
-        model: this.modelName,
-        provider: 'gemini',
+        model: executed.model,
+        provider: executed.provider,
         duration_ms: Date.now() - startTime,
         status: 'success',
+        estimated_tokens: executed.tokens,
       });
 
       return result;
@@ -604,8 +735,8 @@ ${JSON.stringify(req.current_skills, null, 2)}`;
       fallback.ai_status = 'offline_fallback';
       this.recordUsage({
         feature: 'skill_gap',
-        model: this.modelName,
-        provider: 'gemini',
+        model: this.getActiveModel(),
+        provider: this.getActiveProvider(),
         duration_ms: Date.now() - startTime,
         status: 'error',
         error: err?.message,
@@ -629,7 +760,7 @@ Create a structured, step-by-step career progression roadmap for a professional 
 Requirements:
 - Plan exactly 3 to 4 sequential chronological milestones spanning ${req.timeframe_months} months.
 - Each milestone must have: title, duration text, description, weekly goals, task checklists (3-4 tasks with text and category), a practical capstone project (with stack and outcome), and clear progress verification criteria.
-Output MUST be valid JSON only with NO markdown fences.
+- Output MUST be valid JSON only with NO markdown fences.
 JSON Schema:
 {
   "goal_title": string,
@@ -657,8 +788,8 @@ Focus Areas: ${JSON.stringify(req.focus_areas || ['Practical Projects', 'System 
 Weekly Study Hours: ${req.weekly_hours_available || 8} Hours`;
 
     try {
-      const raw = await this.executeGeminiPrompt(promptText, systemPrompt, 0.2);
-      const parsed = this.parseStructuredJSON<any>(raw, null);
+      const executed = await this.executeUnifiedPrompt(promptText, systemPrompt, 0.2, true);
+      const parsed = this.parseStructuredJSON<any>(executed.text, null);
 
       if (!parsed || !Array.isArray(parsed.milestones)) {
         throw new Error('Invalid JSON format from Roadmap Generator');
@@ -676,10 +807,11 @@ Weekly Study Hours: ${req.weekly_hours_available || 8} Hours`;
 
       this.recordUsage({
         feature: 'roadmap',
-        model: this.modelName,
-        provider: 'gemini',
+        model: executed.model,
+        provider: executed.provider,
         duration_ms: Date.now() - startTime,
         status: 'success',
+        estimated_tokens: executed.tokens,
       });
 
       return result;
@@ -688,8 +820,8 @@ Weekly Study Hours: ${req.weekly_hours_available || 8} Hours`;
       fallback.ai_status = 'offline_fallback';
       this.recordUsage({
         feature: 'roadmap',
-        model: this.modelName,
-        provider: 'gemini',
+        model: this.getActiveModel(),
+        provider: this.getActiveProvider(),
         duration_ms: Date.now() - startTime,
         status: 'error',
         error: err?.message,
@@ -715,7 +847,8 @@ Rules:
 - Extract all verifiable hard skills, soft skills, and tools.
 - Provide concrete rewrite examples that replace passive phrases with metric-driven accomplishments.
 - If action is 'generate_cover_letter', generate a professional, culturally aligned, compelling cover letter.
-Output MUST be valid JSON only with NO markdown fences.
+- If action is 'tailor_for_job' or 'match_with_job', tailor the suggestions directly to the target job description requirements without fabricating false experiences.
+- Output MUST be valid JSON only with NO markdown fences.
 JSON Schema:
 {
   "overall_score": number,
@@ -744,8 +877,8 @@ CV Content:
 ${req.cv_text}`;
 
     try {
-      const raw = await this.executeGeminiPrompt(promptText, systemPrompt, 0.2);
-      const parsed = this.parseStructuredJSON<any>(raw, null);
+      const executed = await this.executeUnifiedPrompt(promptText, systemPrompt, 0.2, true);
+      const parsed = this.parseStructuredJSON<any>(executed.text, null);
 
       if (!parsed || typeof parsed.overall_score !== 'number') {
         throw new Error('Invalid JSON format from CV Assistant');
@@ -765,10 +898,11 @@ ${req.cv_text}`;
 
       this.recordUsage({
         feature: 'cv_assist',
-        model: this.modelName,
-        provider: 'gemini',
+        model: executed.model,
+        provider: executed.provider,
         duration_ms: Date.now() - startTime,
         status: 'success',
+        estimated_tokens: executed.tokens,
       });
 
       return result;
@@ -777,8 +911,8 @@ ${req.cv_text}`;
       fallback.ai_status = 'offline_fallback';
       this.recordUsage({
         feature: 'cv_assist',
-        model: this.modelName,
-        provider: 'gemini',
+        model: this.getActiveModel(),
+        provider: this.getActiveProvider(),
         duration_ms: Date.now() - startTime,
         status: 'error',
         error: err?.message,
@@ -817,7 +951,7 @@ Rules:
 - Eliminate exclusionary jargon (e.g. "rockstar", "ninja", aggressive gendered terms).
 - Separate mandatory competencies from nice-to-haves.
 - Add transparent XAF salary recommendations for Cameroon market standards.
-Output MUST be valid JSON only with NO markdown fences.
+- Output MUST be valid JSON only with NO markdown fences.
 JSON Schema:
 {
   "enhanced_title": string,
@@ -843,8 +977,8 @@ Raw Text:
 ${req.raw_description}`;
 
     try {
-      const raw = await this.executeGeminiPrompt(promptText, systemPrompt, 0.2);
-      const parsed = this.parseStructuredJSON<any>(raw, null);
+      const executed = await this.executeUnifiedPrompt(promptText, systemPrompt, 0.2, true);
+      const parsed = this.parseStructuredJSON<any>(executed.text, null);
 
       const result: JobDescAssistResult = {
         enhanced_title: parsed.enhanced_title || req.title,
@@ -860,18 +994,19 @@ ${req.raw_description}`;
 
       this.recordUsage({
         feature: 'job_desc_assist',
-        model: this.modelName,
-        provider: 'gemini',
+        model: executed.model,
+        provider: executed.provider,
         duration_ms: Date.now() - startTime,
         status: 'success',
+        estimated_tokens: executed.tokens,
       });
 
       return result;
     } catch (err: any) {
       this.recordUsage({
         feature: 'job_desc_assist',
-        model: this.modelName,
-        provider: 'gemini',
+        model: this.getActiveModel(),
+        provider: this.getActiveProvider(),
         duration_ms: Date.now() - startTime,
         status: 'error',
         error: err?.message,
@@ -885,6 +1020,120 @@ ${req.raw_description}`;
         nice_to_have_skills: ['Bilingual agility (FR/EN)'],
         bias_detection: { flags_detected: [], recommendations: [] },
         salary_transparency_advice: 'State transparent pay in XAF.',
+        is_ai_powered: false,
+        ai_status: 'offline_fallback',
+      };
+    }
+  }
+
+  // =========================================================================
+  // 7. DIRECT JOB DESCRIPTION & CV MATCHING (Requirement 3.8)
+  // =========================================================================
+  public async directJobCVMatch(req: {
+    job_description: string;
+    cv_text: string;
+    job_title?: string;
+    company_name?: string;
+  }): Promise<{
+    match_score: number;
+    category_scores: { skills: number; experience: number; relevance: number };
+    strengths: string[];
+    missing_qualifications: string[];
+    tailoring_recommendations: string[];
+    executive_critique: string;
+    is_ai_powered: boolean;
+    ai_status: 'live' | 'offline_fallback';
+  }> {
+    const startTime = Date.now();
+
+    if (!this.hasCredentials()) {
+      return {
+        match_score: 82,
+        category_scores: { skills: 85, experience: 80, relevance: 82 },
+        strengths: ['Relevant domain experience matching key job responsibilities.'],
+        missing_qualifications: ['Specific cloud certification or localized regulatory compliance.'],
+        tailoring_recommendations: [
+          'Highlight quantitative achievements directly responding to the job deliverables.',
+          'Mirror key terminology from the job description in your summary.',
+        ],
+        executive_critique:
+          'Solid baseline match. Tailor the opening summary to directly address the primary objectives of this specific role.',
+        is_ai_powered: false,
+        ai_status: 'offline_fallback',
+      };
+    }
+
+    const systemPrompt = `You are WorkDey's Executive CV and Job Match Specialist.
+Directly evaluate the provided candidate CV text against the target Job Description.
+Rules:
+- Provide an objective match score from 0 to 100.
+- Category scores must reflect skills, experience, and overall role relevance.
+- Provide concrete tailoring recommendations without fabricating any false experience.
+- Output MUST be valid JSON only with NO markdown fences.
+JSON Schema:
+{
+  "match_score": number,
+  "category_scores": { "skills": number, "experience": number, "relevance": number },
+  "strengths": [string],
+  "missing_qualifications": [string],
+  "tailoring_recommendations": [string],
+  "executive_critique": string
+}`;
+
+    const promptText = `Target Role: ${req.job_title || 'Position'} at ${req.company_name || 'Organization'}
+
+Job Description:
+${req.job_description}
+
+Candidate CV:
+${req.cv_text}`;
+
+    try {
+      const executed = await this.executeUnifiedPrompt(promptText, systemPrompt, 0.1, true);
+      const parsed = this.parseStructuredJSON<any>(executed.text, null);
+
+      const result = {
+        match_score: Math.min(100, Math.max(0, Math.round(parsed.match_score ?? 80))),
+        category_scores: {
+          skills: Math.min(100, Math.max(0, Math.round(parsed.category_scores?.skills ?? 80))),
+          experience: Math.min(100, Math.max(0, Math.round(parsed.category_scores?.experience ?? 75))),
+          relevance: Math.min(100, Math.max(0, Math.round(parsed.category_scores?.relevance ?? 80))),
+        },
+        strengths: parsed.strengths || [],
+        missing_qualifications: parsed.missing_qualifications || [],
+        tailoring_recommendations: parsed.tailoring_recommendations || [],
+        executive_critique: parsed.executive_critique || 'Good foundational match.',
+        is_ai_powered: true,
+        ai_status: 'live' as const,
+      };
+
+      this.recordUsage({
+        feature: 'cv_assist',
+        model: executed.model,
+        provider: executed.provider,
+        duration_ms: Date.now() - startTime,
+        status: 'success',
+        estimated_tokens: executed.tokens,
+      });
+
+      return result;
+    } catch (err: any) {
+      this.recordUsage({
+        feature: 'cv_assist',
+        model: this.getActiveModel(),
+        provider: this.getActiveProvider(),
+        duration_ms: Date.now() - startTime,
+        status: 'error',
+        error: err?.message,
+      });
+
+      return {
+        match_score: 80,
+        category_scores: { skills: 80, experience: 80, relevance: 80 },
+        strengths: ['Foundational alignment with role requirements.'],
+        missing_qualifications: ['Additional verification needed for specialized tools.'],
+        tailoring_recommendations: ['Quantify metrics on core bullet points.'],
+        executive_critique: 'Advisory analysis performed with deterministic baseline.',
         is_ai_powered: false,
         ai_status: 'offline_fallback',
       };

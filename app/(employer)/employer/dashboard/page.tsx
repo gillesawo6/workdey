@@ -121,7 +121,7 @@ export default function EmployerDashboardPage() {
 
       {/* 2. Top Metric Cards (Calculated Dynamically from Real Data) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-[#E2E7EE] shadow-sm">
+        <div className="bg-white p-5 rounded-[10px] border border-[#E2E7EE] shadow-xs">
           <p className="text-xs text-[#5A6779]">Open roles</p>
           <p className="text-3xl font-black text-[#0B1C2F] mt-1 tnum">{metrics.openRoles}</p>
           <p className="text-[11px] text-[#5A6779] mt-1">
@@ -129,7 +129,7 @@ export default function EmployerDashboardPage() {
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-[#E2E7EE] shadow-sm">
+        <div className="bg-white p-5 rounded-[10px] border border-[#E2E7EE] shadow-xs">
           <p className="text-xs text-[#5A6779]">Total candidates</p>
           <p className="text-3xl font-black text-[#0B1C2F] mt-1 tnum">{metrics.totalApplicants}</p>
           <p className="text-[11px] text-[#1A7F4B] font-semibold mt-1 flex items-center gap-1">
@@ -137,7 +137,7 @@ export default function EmployerDashboardPage() {
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-[#E2E7EE] shadow-sm">
+        <div className="bg-white p-5 rounded-[10px] border border-[#E2E7EE] shadow-xs">
           <p className="text-xs text-[#5A6779]">Awaiting review</p>
           <p className="text-3xl font-black text-[#2552C2] mt-1 tnum">{metrics.awaitingReviewCount}</p>
           <p className="text-[11px] text-[#5A6779] mt-1">
@@ -145,7 +145,7 @@ export default function EmployerDashboardPage() {
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-[#E2E7EE] shadow-sm">
+        <div className="bg-white p-5 rounded-[10px] border border-[#E2E7EE] shadow-xs">
           <p className="text-xs text-[#5A6779]">Scheduled interviews</p>
           <p className="text-3xl font-black text-[#0B7F7A] mt-1 tnum">{metrics.interviewsScheduled}</p>
           <p className="text-[11px] text-[#0B7F7A] font-semibold mt-1">
@@ -157,7 +157,7 @@ export default function EmployerDashboardPage() {
       {/* 3. Middle Two-Column Grid: Pipeline Rail & Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Pipeline Snapshot rails */}
-        <div className="lg:col-span-7 bg-white p-6 rounded-xl border border-[#E2E7EE] shadow-sm space-y-4">
+        <div className="lg:col-span-7 bg-white p-6 rounded-[10px] border border-[#E2E7EE] shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold text-[#0B1C2F] uppercase tracking-wider">
               Recruitment pipeline breakdown
@@ -186,7 +186,7 @@ export default function EmployerDashboardPage() {
         </div>
 
         {/* Recent Recruitment Activity */}
-        <div className="lg:col-span-5 bg-white p-6 rounded-xl border border-[#E2E7EE] shadow-sm space-y-4">
+        <div className="lg:col-span-5 bg-white p-6 rounded-[10px] border border-[#E2E7EE] shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold text-[#0B1C2F] uppercase tracking-wider">
               Live recruitment activity
@@ -218,7 +218,7 @@ export default function EmployerDashboardPage() {
       </div>
 
       {/* 4. Active Jobs Table with Direct Status Controls */}
-      <div className="bg-white rounded-xl border border-[#E2E7EE] shadow-sm overflow-hidden">
+      <div className="bg-white rounded-[10px] border border-[#E2E7EE] shadow-xs overflow-hidden">
         <div className="p-5 border-b border-[#E2E7EE] flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-[#0B1C2F]">Active jobs ({orgJobs.length})</h3>

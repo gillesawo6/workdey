@@ -132,7 +132,7 @@ export default function EmployerPipelinePage() {
           return (
             <div
               key={stg.key}
-              className={`bg-[#F4F6F9] rounded-xl border border-[#E2E7EE] border-t-4 ${stg.color} p-3 flex flex-col min-w-[240px]`}
+              className={`bg-[#F4F6F9] rounded-[10px] border border-[#E2E7EE] border-t-4 ${stg.color} p-3 flex flex-col min-w-[240px]`}
             >
               {/* Column Header */}
               <div className="flex items-center justify-between pb-2 border-b border-[#E2E7EE] mb-3">
@@ -140,7 +140,7 @@ export default function EmployerPipelinePage() {
                   <h3 className="text-xs font-bold text-[#0B1C2F]">{stg.label}</h3>
                   <p className="text-[10px] text-[#5A6779]">{stg.desc}</p>
                 </div>
-                <span className="text-xs font-bold text-[#5A6779] bg-white px-2 py-0.5 rounded border border-[#E2E7EE] tnum">
+                <span className="text-xs font-bold text-[#5A6779] bg-white px-2 py-0.5 rounded-md border border-[#E2E7EE] tnum">
                   {stageCandidates.length}
                 </span>
               </div>
@@ -153,7 +153,7 @@ export default function EmployerPipelinePage() {
                   return (
                     <div
                       key={cand.id}
-                      className="bg-white p-3.5 rounded-xl border border-[#E2E7EE] shadow-sm hover:shadow-md transition-all space-y-2.5 text-xs group"
+                      className="bg-white p-3.5 rounded-[10px] border border-[#E2E7EE] shadow-xs hover:shadow-md transition-all space-y-2.5 text-xs group"
                     >
                       <div className="flex items-start justify-between">
                         <div>
@@ -266,8 +266,8 @@ export default function EmployerPipelinePage() {
 
       {/* Quick Schedule Interview Modal */}
       {schedulingCandidateId && (
-        <div className="fixed inset-0 z-50 bg-[#0B1C2F]/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl border border-[#E2E7EE] shadow-2xl max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-50 bg-[#0B1C2F]/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-[10px] border border-[#E2E7EE] shadow-[0_20px_48px_-12px_rgba(11,28,47,0.25)] max-w-md w-full p-6 space-y-4">
             <h3 className="text-base font-bold text-[#0B1C2F]">Schedule Interview</h3>
             <form onSubmit={handleQuickSchedule} className="space-y-3 text-xs">
               <div>

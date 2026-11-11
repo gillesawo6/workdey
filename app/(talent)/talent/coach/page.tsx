@@ -59,7 +59,10 @@ export default function CareerCoachPage() {
   );
   const [targetCompany, setTargetCompany] = useState('MTN Cameroon');
   const [targetJobRole, setTargetJobRole] = useState('Lead Analytics & Data Platform Specialist');
-  const [cvToolAction, setCvToolAction] = useState<'analyze_and_improve' | 'generate_cover_letter'>('analyze_and_improve');
+  const [targetJobDesc, setTargetJobDesc] = useState(
+    'Key Requirements: 4+ years in analytics & data pipeline automation, Power BI dashboards, SQL ETL, cross-functional collaboration with bilingual (EN/FR) stakeholders in Cameroon.'
+  );
+  const [cvToolAction, setCvToolAction] = useState<'analyze_and_improve' | 'tailor_for_job' | 'generate_cover_letter'>('analyze_and_improve');
   const [isAnalyzingCV, setIsAnalyzingCV] = useState(false);
   const [cvAnalysisResult, setCvAnalysisResult] = useState<CVAssistResult | null>(null);
   const [copiedCoverLetter, setCopiedCoverLetter] = useState(false);
@@ -196,6 +199,7 @@ export default function CareerCoachPage() {
           target_job_title: targetJobRole,
           company_name: targetCompany,
           action: cvToolAction,
+          job_description: targetJobDesc,
         }),
       });
 
@@ -283,7 +287,7 @@ export default function CareerCoachPage() {
       {activeTab === 'chat' && (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main Chat Workspace (3 cols) */}
-          <div className="lg:col-span-3 flex flex-col h-[640px] bg-white rounded-xl border border-[#E2E7EE] shadow-sm overflow-hidden">
+          <div className="lg:col-span-3 flex flex-col h-[640px] bg-white rounded-[10px] border border-[#E2E7EE] shadow-xs overflow-hidden">
             {/* Coach Mode Selector Header */}
             <div className="p-3 bg-[#F4F6F9] border-b border-[#E2E7EE] flex flex-wrap items-center justify-between gap-2">
               <div className="flex flex-wrap items-center gap-1.5">
@@ -355,10 +359,10 @@ export default function CareerCoachPage() {
                   }`}
                 >
                   <div
-                    className={`max-w-[85%] rounded-xl p-4 text-xs leading-relaxed ${
+                    className={`max-w-[85%] rounded-[10px] p-4 text-xs leading-relaxed ${
                       msg.sender === 'user'
-                        ? 'bg-[#0B7F7A] text-white rounded-br-none'
-                        : 'bg-[#F4F6F9] text-[#0B1C2F] border border-[#E2E7EE] rounded-bl-none'
+                        ? 'bg-[#0B7F7A] text-white rounded-br-none shadow-xs'
+                        : 'bg-[#F4F6F9] text-[#0B1C2F] border border-[#E2E7EE] rounded-bl-none shadow-xs'
                     }`}
                   >
                     {msg.sender === 'coach' && (
@@ -380,7 +384,7 @@ export default function CareerCoachPage() {
                           <button
                             key={idx}
                             onClick={() => handleSend(chip)}
-                            className="px-2.5 py-1 text-[11px] font-semibold bg-white hover:bg-[#E6F5F3] hover:text-[#0B7F7A] text-[#0B1C2F] rounded border border-[#E2E7EE] transition-colors text-left"
+                            className="px-2.5 py-1 text-[11px] font-semibold bg-white hover:bg-[#E6F5F3] hover:text-[#0B7F7A] text-[#0B1C2F] rounded-md border border-[#E2E7EE] active:translate-y-px transition-all text-left shadow-xs"
                           >
                             {chip} →
                           </button>
@@ -396,7 +400,7 @@ export default function CareerCoachPage() {
 
               {isTyping && (
                 <div className="flex items-start gap-2">
-                  <div className="p-3 bg-[#F4F6F9] border border-[#E2E7EE] rounded-xl rounded-bl-none text-xs text-[#5A6779] flex items-center gap-2">
+                  <div className="p-3 bg-[#F4F6F9] border border-[#E2E7EE] rounded-[10px] rounded-bl-none text-xs text-[#5A6779] flex items-center gap-2">
                     <Sparkles className="w-3.5 h-3.5 text-[#0B7F7A] animate-spin" />
                     <span>WorkDey Coach is thinking...</span>
                   </div>
@@ -431,7 +435,7 @@ export default function CareerCoachPage() {
                 <button
                   type="submit"
                   disabled={!inputMessage.trim() || isTyping}
-                  className="px-4 py-2.5 rounded-lg bg-[#0B7F7A] text-white text-xs font-bold hover:bg-[#14A89E] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 shadow-sm"
+                  className="px-4 py-2.5 rounded-lg bg-[#0B7F7A] text-white text-xs font-bold hover:bg-[#14A89E] active:translate-y-px transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 shadow-xs"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>Send</span>
@@ -443,7 +447,7 @@ export default function CareerCoachPage() {
           {/* Privacy & Grounding Controls Panel (1 col) */}
           <div className="space-y-4">
             {/* Privacy Controls (PDF Page 15) */}
-            <div className="bg-white rounded-xl border border-[#E2E7EE] p-4 shadow-sm space-y-3">
+            <div className="bg-white rounded-[10px] border border-[#E2E7EE] p-4 shadow-xs space-y-3">
               <div className="flex items-center gap-2 pb-2 border-b border-[#E2E7EE]">
                 <Shield className="w-4 h-4 text-[#0B7F7A]" />
                 <h3 className="text-xs font-bold text-[#0B1C2F]">Candidate Privacy & Data</h3>
@@ -625,6 +629,17 @@ export default function CareerCoachPage() {
                 <input
                   type="radio"
                   name="cv_action"
+                  checked={cvToolAction === 'tailor_for_job'}
+                  onChange={() => setCvToolAction('tailor_for_job')}
+                  className="text-[#0B7F7A] focus:ring-[#0B7F7A]"
+                />
+                Match & Tailor to Job
+              </label>
+
+              <label className="flex items-center gap-2 text-xs font-bold text-[#0B1C2F] cursor-pointer">
+                <input
+                  type="radio"
+                  name="cv_action"
                   checked={cvToolAction === 'generate_cover_letter'}
                   onChange={() => setCvToolAction('generate_cover_letter')}
                   className="text-[#0B7F7A] focus:ring-[#0B7F7A]"
@@ -632,6 +647,21 @@ export default function CareerCoachPage() {
                 Draft Tailored Cover Letter
               </label>
             </div>
+
+            {cvToolAction === 'tailor_for_job' && (
+              <div className="pt-1">
+                <label className="block text-xs font-bold text-[#0B1C2F] mb-1">
+                  Target Job Description & Requirements
+                </label>
+                <textarea
+                  rows={4}
+                  value={targetJobDesc}
+                  onChange={(e) => setTargetJobDesc(e.target.value)}
+                  className="w-full p-2.5 text-xs bg-[#F4F6F9] border border-[#E2E7EE] rounded-lg focus:outline-none focus:border-[#0B7F7A] text-[#0B1C2F]"
+                  placeholder="Paste the target job description or requirements here..."
+                />
+              </div>
+            )}
 
             <button
               onClick={handleRunCVTool}
@@ -649,6 +679,8 @@ export default function CareerCoachPage() {
                   <span>
                     {cvToolAction === 'analyze_and_improve'
                       ? 'Analyze CV & Extract Skills'
+                      : cvToolAction === 'tailor_for_job'
+                      ? 'Analyze Match & Tailor CV'
                       : 'Generate Tailored Cover Letter'}
                   </span>
                 </>

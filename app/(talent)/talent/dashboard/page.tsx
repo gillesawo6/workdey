@@ -92,14 +92,14 @@ export default function TalentDashboardPage() {
         <div className="flex items-center gap-2.5">
           <Link
             href="/talent/coach"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white border border-[#E2E7EE] text-[#0B7F7A] text-xs font-bold hover:bg-[#E6F5F3] transition-all shadow-sm"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white border border-[#E2E7EE] text-[#0B7F7A] text-xs font-bold hover:bg-[#E6F5F3] active:translate-y-px transition-all shadow-xs"
           >
             <Sparkles className="w-3.5 h-3.5 text-[#0B7F7A]" />
-            Ask AI Coach
+            Career Coach
           </Link>
           <Link
             href="/talent/jobs"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#0B7F7A] text-white text-xs font-bold hover:bg-[#14A89E] transition-all shadow-sm group"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#0B7F7A] text-white text-xs font-bold hover:bg-[#14A89E] active:translate-y-px transition-all shadow-xs group"
           >
             Discover jobs
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -111,7 +111,7 @@ export default function TalentDashboardPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <Link
           href="/talent/applications"
-          className="p-4 bg-white rounded-xl border border-[#E2E7EE] shadow-sm hover:border-[#0B7F7A]/40 transition-colors"
+          className="p-4 bg-white rounded-[10px] border border-[#E2E7EE] shadow-xs hover:border-[#0B7F7A]/50 transition-colors"
         >
           <span className="text-[10px] font-bold text-[#5A6779] uppercase tracking-wider block">
             Active Applications
@@ -124,7 +124,7 @@ export default function TalentDashboardPage() {
 
         <Link
           href="/talent/saved"
-          className="p-4 bg-white rounded-xl border border-[#E2E7EE] shadow-sm hover:border-[#0B7F7A]/40 transition-colors"
+          className="p-4 bg-white rounded-[10px] border border-[#E2E7EE] shadow-xs hover:border-[#0B7F7A]/50 transition-colors"
         >
           <span className="text-[10px] font-bold text-[#5A6779] uppercase tracking-wider block">
             Saved Roles
@@ -137,7 +137,7 @@ export default function TalentDashboardPage() {
 
         <Link
           href="/talent/roadmap"
-          className="p-4 bg-white rounded-xl border border-[#E2E7EE] shadow-sm hover:border-[#0B7F7A]/40 transition-colors"
+          className="p-4 bg-white rounded-[10px] border border-[#E2E7EE] shadow-xs hover:border-[#0B7F7A]/50 transition-colors"
         >
           <span className="text-[10px] font-bold text-[#5A6779] uppercase tracking-wider block">
             Roadmap Progress
@@ -150,7 +150,7 @@ export default function TalentDashboardPage() {
 
         <Link
           href="/talent/notifications"
-          className="p-4 bg-white rounded-xl border border-[#E2E7EE] shadow-sm hover:border-[#0B7F7A]/40 transition-colors"
+          className="p-4 bg-white rounded-[10px] border border-[#E2E7EE] shadow-xs hover:border-[#0B7F7A]/50 transition-colors"
         >
           <span className="text-[10px] font-bold text-[#5A6779] uppercase tracking-wider block">
             Notifications
@@ -165,7 +165,7 @@ export default function TalentDashboardPage() {
       {/* 3. Top Alert Banner & Interview Reminder */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Upcoming Interview Card */}
-        <div className="lg:col-span-8 bg-white rounded-xl border border-[#E2E7EE] p-5 shadow-sm space-y-4">
+        <div className="lg:col-span-8 bg-white rounded-[10px] border border-[#E2E7EE] p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-[#5A6779] uppercase tracking-wider">
               Upcoming Interview
@@ -175,10 +175,10 @@ export default function TalentDashboardPage() {
             </span>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-[#E6F5F3]/50 border border-[#0B7F7A]/20">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-lg bg-[#E6F5F3]/60 border border-[#0B7F7A]/20">
             <div className="flex items-start gap-3.5">
-              <div className="w-12 h-12 rounded-lg bg-[#0B1C2F] text-white flex flex-col items-center justify-center font-bold text-xs flex-shrink-0">
-                <span className="text-[9px] text-[#14A89E] uppercase leading-none">TUE</span>
+              <div className="w-12 h-12 rounded-lg bg-[#0B1C2F] text-white flex flex-col items-center justify-center font-bold text-xs flex-shrink-0 shadow-xs">
+                <span className="text-[9px] text-[#14A89E] uppercase leading-none font-semibold">TUE</span>
                 <span className="text-base leading-tight font-black tnum">3</span>
               </div>
               <div>
@@ -186,7 +186,7 @@ export default function TalentDashboardPage() {
                   <span className="text-xs font-bold text-[#0B1C2F]">
                     Senior Data Analyst
                   </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#0B7F7A] text-white font-semibold">
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#0B7F7A] text-white font-semibold">
                     Savanna Agritech
                   </span>
                 </div>
@@ -199,13 +199,13 @@ export default function TalentDashboardPage() {
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <Link
                 href="/talent/coach"
-                className="w-full sm:w-auto px-3.5 py-1.5 rounded-lg bg-[#0B7F7A] text-white text-xs font-semibold hover:bg-[#14A89E] transition-colors text-center shadow-sm"
+                className="w-full sm:w-auto px-3.5 py-2 rounded-lg bg-[#0B7F7A] text-white text-xs font-semibold hover:bg-[#14A89E] active:translate-y-px transition-all text-center shadow-xs"
               >
                 Mock prep
               </Link>
               <Link
                 href="/talent/applications"
-                className="w-full sm:w-auto px-3 py-1.5 rounded-lg border border-[#E2E7EE] bg-white text-xs font-semibold text-[#0B1C2F] hover:bg-[#F4F6F9] text-center"
+                className="w-full sm:w-auto px-3 py-2 rounded-lg border border-[#E2E7EE] bg-white text-xs font-semibold text-[#0B1C2F] hover:bg-[#F4F6F9] active:translate-y-px transition-all text-center shadow-xs"
               >
                 View details
               </Link>
@@ -214,7 +214,7 @@ export default function TalentDashboardPage() {
         </div>
 
         {/* Right: Profile Strength Meter */}
-        <div className="lg:col-span-4 bg-white rounded-xl border border-[#E2E7EE] p-5 shadow-sm flex flex-col justify-between">
+        <div className="lg:col-span-4 bg-white rounded-[10px] border border-[#E2E7EE] p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-[10px] font-bold text-[#5A6779] uppercase tracking-wider">
@@ -277,7 +277,7 @@ export default function TalentDashboardPage() {
               return (
                 <div
                   key={job.id}
-                  className="p-4 bg-white rounded-xl border border-[#E2E7EE] shadow-sm hover:border-[#0B7F7A]/40 transition-all space-y-3"
+                  className="p-4 bg-white rounded-[10px] border border-[#E2E7EE] shadow-xs hover:border-[#0B7F7A]/50 transition-all space-y-3"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
@@ -350,7 +350,7 @@ export default function TalentDashboardPage() {
         {/* Right Column: Roadmap Daily Tasks & Deadlines (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
           {/* Daily Tasks from Roadmap */}
-          <div className="bg-white p-5 rounded-xl border border-[#E2E7EE] shadow-sm space-y-4">
+          <div className="bg-white p-5 rounded-[10px] border border-[#E2E7EE] shadow-xs space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Target className="w-4 h-4 text-[#0B7F7A]" />
@@ -367,11 +367,11 @@ export default function TalentDashboardPage() {
               Milestone: <strong className="text-[#0B1C2F]">{roadmap.milestones[1]?.title || 'Agribusiness Analytics'}</strong>
             </p>
 
-            <div className="space-y-2.5 pt-1">
+            <div className="space-y-2 pt-1">
               {roadmap.milestones[1]?.tasks.map((task) => (
                 <label
                   key={task.id}
-                  className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-[#F4F6F9] cursor-pointer text-xs"
+                  className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-[#F4F6F9] cursor-pointer text-xs transition-colors"
                 >
                   <input
                     type="checkbox"
@@ -392,7 +392,7 @@ export default function TalentDashboardPage() {
           </div>
 
           {/* Application Deadlines */}
-          <div className="bg-white p-5 rounded-xl border border-[#E2E7EE] shadow-sm space-y-3">
+          <div className="bg-white p-5 rounded-[10px] border border-[#E2E7EE] shadow-xs space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-bold text-[#5A6779] uppercase tracking-wider">
                 Upcoming Deadlines
@@ -406,7 +406,7 @@ export default function TalentDashboardPage() {
                   <span className="font-bold text-[#0B1C2F] block">Savanna Agritech</span>
                   <span className="text-[#5A6779] text-[11px]">Submit references &amp; portfolio</span>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FEF7EC] text-[#E8A317]">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FEF7EC] text-[#E8A317]">
                   Nov 5
                 </span>
               </div>
@@ -416,7 +416,7 @@ export default function TalentDashboardPage() {
                   <span className="font-bold text-[#0B1C2F] block">Orbit Telecom Lead</span>
                   <span className="text-[#5A6779] text-[11px]">Application window closing</span>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#EAF0FC] text-[#2552C2]">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EAF0FC] text-[#2552C2]">
                   Nov 15
                 </span>
               </div>

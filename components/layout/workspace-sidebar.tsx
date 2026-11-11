@@ -289,7 +289,7 @@ export function WorkspaceSidebar() {
           isAdmin ? 'border-[#223247] text-[#A0AEC0]' : 'border-[#E2E7EE] text-[#5A6779]'
         }`}
       >
-        <span className="w-2 h-2 rounded-full bg-[#1A7F4B] flex-shrink-0 animate-pulse" />
+        <span className="w-2 h-2 rounded-full bg-[#1A7F4B] flex-shrink-0" />
         <span className="hidden xl:inline truncate">All systems operational</span>
       </div>
     </aside>

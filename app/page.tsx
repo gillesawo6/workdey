@@ -161,113 +161,112 @@ export default function LandingPage() {
                 </div>
               </motion.div>
 
-              {/* Right Column: Layered Interactive Hero Card (PDF Page 7) */}
+              {/* Right Column: Floating Multi-Card Arrangement (Exact Image 2 Asymmetric Offsets) */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-                className="lg:col-span-5 relative"
+                className="lg:col-span-5 relative flex flex-col justify-center py-4"
               >
-                {/* Floating Preview Card (Liquid Glass material with fine inner border) */}
-                <div className="liquid-glass rounded-2xl p-5 sm:p-6 shadow-2xl border border-white/80 space-y-4 sm:space-y-5 relative">
-                  {/* Top card row: Senior Data Analyst, Savanna Agritech */}
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-12 h-12 rounded-xl bg-[#2552C2] text-white flex items-center justify-center font-black text-sm shadow-md shrink-0">
+                <div className="relative space-y-4">
+                  {/* 1. Top Card: Shifted to the left, hanging over the dashed line */}
+                  <div className="w-[88%] sm:w-[86%] mr-auto -translate-x-2 sm:-translate-x-4 bg-white rounded-2xl p-4 sm:p-4.5 shadow-[0_14px_34px_-8px_rgba(11,28,47,0.10)] border border-[#E2E7EE]/80 flex items-center justify-between gap-3 relative z-20">
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div className="w-10 h-10 rounded-xl bg-[#E6F5F3] text-[#0B7F7A] flex items-center justify-center font-black text-xs shrink-0 tracking-tight">
                         SA
                       </div>
                       <div className="min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-semibold text-[#5A6779] truncate">
-                            Savanna Agritech
-                          </span>
-                          <span title="Verified Enterprise">
-                            <ShieldCheck className="w-3.5 h-3.5 text-[#1A7F4B] shrink-0" />
-                          </span>
-                        </div>
-                        <h3 className="text-base font-bold text-[#0B1C2F] leading-tight truncate">
+                        <h3 className="text-sm sm:text-base font-bold text-[#0B1C2F] leading-tight truncate">
                           Senior Data Analyst
                         </h3>
-                        <p className="text-xs text-[#5A6779]">Douala · Hybrid</p>
-                        <p className="text-xs font-semibold text-[#0B1C2F] mt-0.5 tnum truncate">
-                          650,000 – 900,000 XAF / month
+                        <p className="text-[11px] text-[#5A6779] mt-0.5 truncate">
+                          Savanna Agritech · Douala · Hybrid
+                        </p>
+                        <p className="text-xs font-bold text-[#0B1C2F] mt-1 tnum truncate">
+                          650,000 – 900,000 XAF <span className="font-normal text-[#5A6779]">/ month</span>
                         </p>
                       </div>
                     </div>
 
                     {/* Circular Score Badge 92 */}
                     <div className="shrink-0">
-                      <MatchRing score={92} size="md" />
+                      <MatchRing score={92} size="md" showLabel={false} />
                     </div>
                   </div>
 
-                  {/* Explainable Match Factors Breakdown (Tactile Clay Card) */}
-                  <div className="clay-widget p-3.5 sm:p-4 space-y-2 text-xs">
+                  {/* 2. Middle Card (WHY 92): Shifted to the right, extending outward */}
+                  <div className="w-[92%] sm:w-[90%] ml-auto translate-x-2 sm:translate-x-4 bg-white rounded-2xl p-4 sm:p-5 shadow-[0_12px_30px_-6px_rgba(11,28,47,0.08)] border border-[#E2E7EE]/80 space-y-2.5 relative z-10">
                     <p className="text-[10px] font-bold text-[#5A6779] uppercase tracking-wider">
-                      Why 92% Match
+                      WHY 92
                     </p>
-                    <div className="space-y-1.5">
-                      <div>
-                        <div className="flex justify-between text-[11px] mb-1">
-                          <span className="font-medium text-[#3D4A5C]">Skills fit</span>
-                          <span className="font-bold text-[#0B1C2F] tnum">88%</span>
-                        </div>
-                        <div className="w-full h-1.5 rounded-full bg-[#E2E7EE] overflow-hidden">
+                    <div className="space-y-2 pt-0.5">
+                      <div className="flex items-center gap-3 text-xs">
+                        <span className="w-20 text-[#5A6779] text-[11px] font-medium shrink-0">Skills</span>
+                        <div className="flex-1 h-1.5 rounded-full bg-[#E2E7EE] overflow-hidden">
                           <div className="h-full bg-[#0B7F7A] rounded-full w-[88%]" />
                         </div>
+                        <span className="w-7 text-right font-bold text-[#0B1C2F] text-[11px] tnum shrink-0">88</span>
                       </div>
 
-                      <div>
-                        <div className="flex justify-between text-[11px] mb-1">
-                          <span className="font-medium text-[#3D4A5C]">Experience fit</span>
-                          <span className="font-bold text-[#0B1C2F] tnum">74%</span>
-                        </div>
-                        <div className="w-full h-1.5 rounded-full bg-[#E2E7EE] overflow-hidden">
+                      <div className="flex items-center gap-3 text-xs">
+                        <span className="w-20 text-[#5A6779] text-[11px] font-medium shrink-0">Experience</span>
+                        <div className="flex-1 h-1.5 rounded-full bg-[#E2E7EE] overflow-hidden">
                           <div className="h-full bg-[#0B7F7A] rounded-full w-[74%]" />
                         </div>
+                        <span className="w-7 text-right font-bold text-[#0B1C2F] text-[11px] tnum shrink-0">74</span>
                       </div>
 
-                      <div>
-                        <div className="flex justify-between text-[11px] mb-1">
-                          <span className="font-medium text-[#3D4A5C]">Location &amp; work style</span>
-                          <span className="font-bold text-[#0B1C2F] tnum">100%</span>
-                        </div>
-                        <div className="w-full h-1.5 rounded-full bg-[#E2E7EE] overflow-hidden">
+                      <div className="flex items-center gap-3 text-xs">
+                        <span className="w-20 text-[#5A6779] text-[11px] font-medium shrink-0">Location</span>
+                        <div className="flex-1 h-1.5 rounded-full bg-[#E2E7EE] overflow-hidden">
                           <div className="h-full bg-[#0B7F7A] rounded-full w-[100%]" />
                         </div>
+                        <span className="w-7 text-right font-bold text-[#0B1C2F] text-[11px] tnum shrink-0">100</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Application Timeline preview */}
-                  <div className="flex items-center justify-between p-3 bg-white/70 rounded-xl border border-[#E2E7EE] text-xs">
-                    <div>
-                      <span className="text-[10px] uppercase font-bold text-[#5A6779] block">
-                        Application Progress
+                  {/* 3. Bottom Row: Asymmetric split with Application on left & Coach on right */}
+                  <div className="flex items-stretch gap-3 w-[95%] sm:w-[94%] ml-0 sm:ml-1 relative z-10">
+                    {/* Left: Application Progress Stepper */}
+                    <div className="w-[44%] sm:w-[42%] bg-white rounded-2xl p-3.5 sm:p-4 shadow-[0_10px_28px_-6px_rgba(11,28,47,0.07)] border border-[#E2E7EE]/80 flex flex-col justify-between">
+                      <div>
+                        <span className="text-xs font-bold text-[#0B1C2F] block">
+                          Application
+                        </span>
+                        {/* 4-Node Timeline Stepper */}
+                        <div className="flex items-center w-full my-3 px-0.5">
+                          <div className="w-3.5 h-3.5 rounded-full bg-[#0B7F7A] shrink-0" />
+                          <div className="h-0.5 flex-1 bg-[#0B7F7A]" />
+                          <div className="w-3.5 h-3.5 rounded-full bg-[#0B7F7A] shrink-0" />
+                          <div className="h-0.5 flex-1 bg-[#0B7F7A]" />
+                          <div className="w-3.5 h-3.5 rounded-full border-2 border-[#0B7F7A] bg-white shrink-0" />
+                          <div className="h-0.5 flex-1 bg-[#E2E7EE]" />
+                          <div className="w-3.5 h-3.5 rounded-full border-2 border-[#CBD5E1] bg-white shrink-0" />
+                        </div>
+                      </div>
+                      <span className="text-[10px] text-[#5A6779] font-medium block truncate">
+                        Interview · Tue 10:00
                       </span>
-                      <span className="font-bold text-[#0B1C2F]">Stage: Interview Scheduled</span>
                     </div>
-                    <span className="px-2.5 py-1 rounded-md bg-[#EAF0FC] text-[#2552C2] text-[11px] font-bold">
-                      Shortlisted
-                    </span>
+
+                    {/* Right: Solid Dark Coach Card */}
+                    <div className="w-[56%] sm:w-[58%] bg-[#0B1C2F] rounded-2xl p-3.5 sm:p-4 shadow-[0_12px_32px_-8px_rgba(11,28,47,0.25)] border border-[#162436] flex flex-col justify-between">
+                      <span className="text-[10px] uppercase font-bold text-[#14A89E] tracking-wider block">
+                        COACH
+                      </span>
+                      <p className="text-xs text-[#E7ECF3] leading-snug mt-2 font-medium">
+                        Add one dashboard project to strengthen six matches.
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Lit Dark Coach Card (PDF Page 6: Solid navy with teal glow) */}
-                  <div className="p-3.5 bg-[#0B1C2F] rounded-xl text-white shadow-lg border border-[#223247] space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] uppercase font-bold text-[#14A89E] tracking-wider">
-                        Coach Insight
-                      </span>
-                      <span className="text-[10px] text-[#A0AEC0]">Grounded in CV</span>
-                    </div>
-                    <p className="text-xs text-[#E7ECF3] leading-relaxed">
-                      &ldquo;Add one dashboard project with SQL window functions to strengthen 6 top matches in Douala.&rdquo;
+                  {/* Caption below cards, right-aligned like in screenshot */}
+                  <div className="flex justify-end pr-2 pt-1">
+                    <p className="text-[11px] text-[#5A6779]/80 font-normal">
+                      Illustrative preview with sample data
                     </p>
                   </div>
-
-                  <p className="text-center text-[11px] text-[#5A6779] pt-1">
-                    Live interactive preview with verified seed data
-                  </p>
                 </div>
               </motion.div>
             </div>

@@ -50,7 +50,7 @@ export default function AdminOverviewPage() {
 
       {/* 2. Top Metric Cards (Calculated directly from actual database collections) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="admin-panel p-5 rounded-xl">
+        <div className="admin-panel p-5 rounded-[10px]">
           <p className="text-xs text-[#A0AEC0]">Registered users</p>
           <p className="text-3xl font-black text-white mt-1 tnum">{metrics.totalUsers}</p>
           <p className="text-[11px] text-[#A0AEC0] mt-1">
@@ -58,7 +58,7 @@ export default function AdminOverviewPage() {
           </p>
         </div>
 
-        <div className="admin-panel p-5 rounded-xl">
+        <div className="admin-panel p-5 rounded-[10px]">
           <p className="text-xs text-[#A0AEC0]">Jobs awaiting review</p>
           <p className="text-3xl font-black text-[#E8A317] mt-1 tnum">{metrics.pendingModeration}</p>
           <p className="text-[11px] text-[#E8A317] font-semibold mt-1">
@@ -66,7 +66,7 @@ export default function AdminOverviewPage() {
           </p>
         </div>
 
-        <div className="admin-panel p-5 rounded-xl">
+        <div className="admin-panel p-5 rounded-[10px]">
           <p className="text-xs text-[#A0AEC0]">Employers to verify</p>
           <p className="text-3xl font-black text-white mt-1 tnum">{metrics.pendingVerifications}</p>
           <p className="text-[11px] text-[#A0AEC0] mt-1">
@@ -74,7 +74,7 @@ export default function AdminOverviewPage() {
           </p>
         </div>
 
-        <div className="admin-panel p-5 rounded-xl">
+        <div className="admin-panel p-5 rounded-[10px]">
           <p className="text-xs text-[#A0AEC0]">Open policy reports</p>
           <p className="text-3xl font-black text-[#B42318] mt-1 tnum">{metrics.openReports}</p>
           <p className="text-[11px] text-[#B42318] font-semibold mt-1">
@@ -86,7 +86,7 @@ export default function AdminOverviewPage() {
       {/* 3. Middle Grid: Revenue & AI Service Health */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Sign-ups by workspace */}
-        <div className="lg:col-span-7 admin-panel p-5 rounded-xl space-y-4">
+        <div className="lg:col-span-7 admin-panel p-5 rounded-[10px] space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold text-white uppercase tracking-wider">
               Weekly Activity Telemetry
@@ -141,7 +141,7 @@ export default function AdminOverviewPage() {
         </div>
 
         {/* AI Service Health Telemetry */}
-        <div className="lg:col-span-5 admin-panel p-5 rounded-xl space-y-4">
+        <div className="lg:col-span-5 admin-panel p-5 rounded-[10px] space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
               <Cpu className="w-4 h-4 text-[#E8A317]" />
@@ -158,7 +158,7 @@ export default function AdminOverviewPage() {
                 <p className="font-bold text-white">Job & Candidate Matching</p>
                 <p className="text-[11px] text-[#A0AEC0]">Gemini 3.5 Flash · Server API Route</p>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#1A7F4B]/20 text-[#1A7F4B]">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1A7F4B]/20 text-[#1A7F4B]">
                 Operational
               </span>
             </div>
@@ -168,7 +168,7 @@ export default function AdminOverviewPage() {
                 <p className="font-bold text-white">Career Coach & Roadmaps</p>
                 <p className="text-[11px] text-[#A0AEC0]">Multi-turn interview model · active</p>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#1A7F4B]/20 text-[#1A7F4B]">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1A7F4B]/20 text-[#1A7F4B]">
                 Operational
               </span>
             </div>
@@ -179,7 +179,7 @@ export default function AdminOverviewPage() {
                   <p className="font-bold text-white">CV Document Extraction</p>
                   <p className="text-[11px] text-[#A0AEC0]">Structured document parser</p>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#1A7F4B]/20 text-[#1A7F4B]">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1A7F4B]/20 text-[#1A7F4B]">
                   Operational
                 </span>
               </div>
@@ -192,7 +192,7 @@ export default function AdminOverviewPage() {
       </div>
 
       {/* 4. Needs Attention Urgent Queue (Connected to real moderationReports) */}
-      <div className="admin-panel rounded-xl overflow-hidden">
+      <div className="admin-panel rounded-[10px] overflow-hidden">
         <div className="p-5 border-b border-[#223247] flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-white">Needs attention ({pendingQueue.length})</h3>

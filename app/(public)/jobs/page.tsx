@@ -45,7 +45,7 @@ export default function PublicJobsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* 1. Search Bar & Filter Bar (PDF Page 10) */}
-      <div className="bg-white p-4 rounded-xl border border-[#E2E7EE] shadow-sm space-y-3">
+      <div className="bg-white p-4 rounded-[10px] border border-[#E2E7EE] shadow-sm space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
           <div className="sm:col-span-6 flex items-center px-3 py-2 bg-[#F4F6F9] rounded-lg border border-transparent focus-within:border-[#0B7F7A] focus-within:ring-2 focus-within:ring-[#0B7F7A]/20">
             <Search className="w-4 h-4 text-[#5A6779] mr-2" />
@@ -75,34 +75,36 @@ export default function PublicJobsPage() {
           </div>
 
           <div className="sm:col-span-2">
-            <button className="w-full h-full py-2 px-4 rounded-lg bg-[#0B7F7A] text-white text-xs font-semibold hover:bg-[#14A89E] transition-colors flex items-center justify-center gap-1">
+            <button className="w-full h-full min-h-[38px] py-2 px-4 rounded-lg bg-[#0B7F7A] text-white text-xs font-semibold hover:bg-[#14A89E] active:translate-y-px transition-all flex items-center justify-center gap-1 shadow-xs">
               Filter roles
             </button>
           </div>
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[#E2E7EE] text-xs">
-          {['all', 'hybrid', 'remote', 'onsite'].map((style) => (
-            <button
-              key={style}
-              onClick={() => setFilterStyle(style)}
-              className={`px-3 py-1 rounded-full capitalize font-semibold transition-colors ${
-                filterStyle === style
-                  ? 'bg-[#0B7F7A] text-white'
-                  : 'bg-[#F4F6F9] text-[#5A6779] hover:bg-[#E2E7EE]'
-              }`}
-            >
-              {style === 'all' ? 'All Styles' : style}
-            </button>
-          ))}
-          <span className="text-[#E2E7EE] mx-1">|</span>
-          <span className="text-[11px] font-bold text-[#5A6779] uppercase">Popular:</span>
+        {/* Filter Segmented Controls */}
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#E2E7EE] text-xs">
+          <div className="inline-flex p-0.5 bg-[#F4F6F9] rounded-lg border border-[#E2E7EE]">
+            {['all', 'hybrid', 'remote', 'onsite'].map((style) => (
+              <button
+                key={style}
+                onClick={() => setFilterStyle(style)}
+                className={`px-3 py-1.5 rounded-md capitalize font-semibold transition-all ${
+                  filterStyle === style
+                    ? 'bg-white text-[#0B1C2F] shadow-xs'
+                    : 'text-[#5A6779] hover:text-[#0B1C2F]'
+                }`}
+              >
+                {style === 'all' ? 'All Styles' : style}
+              </button>
+            ))}
+          </div>
+          <span className="text-[#E2E7EE] mx-1">·</span>
+          <span className="text-[11px] font-bold text-[#5A6779] uppercase tracking-wider">Popular:</span>
           {['Douala', 'Yaoundé', 'Buea', 'Remote'].map((city) => (
             <button
               key={city}
               onClick={() => setFilterCity(city === 'Remote' ? 'all' : city)}
-              className="text-xs text-[#0B1C2F] hover:text-[#0B7F7A] underline decoration-[#E2E7EE]"
+              className="text-xs text-[#0B1C2F] hover:text-[#0B7F7A] underline decoration-[#E2E7EE] underline-offset-2 font-medium"
             >
               {city}
             </button>
@@ -127,10 +129,10 @@ export default function PublicJobsPage() {
               <div
                 key={job.id}
                 onClick={() => setSelectedJob(job)}
-                className={`p-4 rounded-xl border transition-all cursor-pointer ${
+                className={`p-4 rounded-[10px] border transition-all cursor-pointer ${
                   isSelected
-                    ? 'border-[#0B7F7A] bg-white shadow-md ring-1 ring-[#0B7F7A]/20'
-                    : 'border-[#E2E7EE] bg-white hover:border-[#0B7F7A]/60 shadow-sm'
+                    ? 'border-[#0B7F7A] bg-white shadow-md ring-1 ring-[#0B7F7A]/25'
+                    : 'border-[#E2E7EE] bg-white hover:border-[#0B7F7A]/60 shadow-xs'
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -151,10 +153,10 @@ export default function PublicJobsPage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-1.5 mt-3 text-[11px]">
-                  <span className="px-2 py-0.5 rounded bg-[#F4F6F9] text-[#5A6779] font-medium capitalize">
+                  <span className="px-2 py-0.5 rounded-md bg-[#F4F6F9] text-[#5A6779] font-medium capitalize">
                     {job.work_style}
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-[#F4F6F9] text-[#5A6779] font-medium capitalize">
+                  <span className="px-2 py-0.5 rounded-md bg-[#F4F6F9] text-[#5A6779] font-medium capitalize">
                     {job.contract_type.replace('_', '-')}
                   </span>
                 </div>
@@ -163,7 +165,7 @@ export default function PublicJobsPage() {
                   <span className="font-bold text-[#0B1C2F] tnum">
                     {job.salary_min_xaf.toLocaleString()} – {job.salary_max_xaf.toLocaleString()} XAF
                   </span>
-                  <span className="text-[11px] font-semibold text-[#0B7F7A]">
+                  <span className="text-[11px] font-semibold text-[#0B7F7A] bg-[#E6F5F3] px-2 py-0.5 rounded-full">
                     92% Match
                   </span>
                 </div>
@@ -173,11 +175,11 @@ export default function PublicJobsPage() {
         </div>
 
         {/* Right Column: Sticky Job Detail (PDF Page 10) */}
-        <div className="lg:col-span-7 sticky top-24 bg-white rounded-xl border border-[#E2E7EE] p-6 shadow-sm space-y-6">
+        <div className="lg:col-span-7 sticky top-24 bg-white rounded-[10px] border border-[#E2E7EE] p-6 shadow-sm space-y-6">
           {/* Header & Primary Actions */}
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-3.5">
-              <div className="w-12 h-12 rounded-xl bg-[#2552C2] text-white flex items-center justify-center font-black text-base flex-shrink-0">
+              <div className="w-12 h-12 rounded-lg bg-[#2552C2] text-white flex items-center justify-center font-black text-base flex-shrink-0">
                 SA
               </div>
               <div>
@@ -188,7 +190,7 @@ export default function PublicJobsPage() {
                   <span>Savanna Agritech</span>
                   <span>·</span>
                   <span>{selectedJob.city}, {selectedJob.region}</span>
-                  <span className="inline-flex items-center gap-1 text-[#1A7F4B] font-semibold bg-[#E6F5F3] px-2 py-0.5 rounded-full text-[10px]">
+                  <span className="inline-flex items-center gap-1 text-[#1A7F4B] font-semibold bg-[#E6F5F3] px-2.5 py-0.5 rounded-full text-[10px]">
                     <ShieldCheck className="w-3 h-3" />
                     Verified employer
                   </span>
@@ -199,7 +201,7 @@ export default function PublicJobsPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsSaved(!isSaved)}
-                className={`p-2 rounded-lg border text-xs font-semibold flex items-center gap-1 transition-colors ${
+                className={`p-2 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition-all ${
                   isSaved ? 'bg-[#E6F5F3] border-[#0B7F7A] text-[#0B7F7A]' : 'border-[#E2E7EE] hover:bg-[#F4F6F9] text-[#5A6779]'
                 }`}
                 title="Save job"
@@ -211,7 +213,7 @@ export default function PublicJobsPage() {
           </div>
 
           {/* Apply CTA Bar */}
-          <div className="p-4 rounded-xl bg-[#F4F6F9] border border-[#E2E7EE] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-4 rounded-[10px] bg-[#F4F6F9] border border-[#E2E7EE] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               {appliedSuccess ? (
                 <div className="flex items-center gap-1.5 text-xs font-bold text-[#1A7F4B]">
@@ -227,7 +229,7 @@ export default function PublicJobsPage() {
             {!appliedSuccess ? (
               <button
                 onClick={() => setAppliedSuccess(true)}
-                className="px-5 py-2.5 rounded-lg bg-[#0B7F7A] text-white text-xs font-bold hover:bg-[#14A89E] transition-all shadow-sm flex items-center justify-center gap-1.5"
+                className="px-5 py-2.5 rounded-lg bg-[#0B7F7A] text-white text-xs font-bold hover:bg-[#14A89E] active:translate-y-px transition-all shadow-xs flex items-center justify-center gap-1.5"
               >
                 {isAuthenticated ? 'Apply now' : 'Sign in to apply'}
                 <ArrowRight className="w-4 h-4" />
@@ -242,13 +244,13 @@ export default function PublicJobsPage() {
             )}
           </div>
 
-          {/* AI Match Explanation Callout (PDF Page 10) */}
-          <div className="p-4 rounded-xl bg-[#0B1C2F] text-white space-y-2">
+          {/* AI Match Explanation Callout (PDF Page 6: Lit dark card) */}
+          <div className="p-4 rounded-[10px] bg-[#0B1C2F] text-white space-y-2 border border-[#14A89E]/25 shadow-[0_8px_24px_-4px_rgba(11,28,47,0.28)]">
             <div className="flex items-center justify-between">
               <span className="text-[10px] uppercase font-bold text-[#14A89E] tracking-wider flex items-center gap-1">
                 <Sparkles className="w-3 h-3" /> 92% Match Score
               </span>
-              <span className="text-[10px] text-[#A0AEC0]">Advisory only</span>
+              <span className="text-[10px] text-[#A0AEC0]">Evidence-based Advisory</span>
             </div>
             <p className="text-xs text-[#E7ECF3] leading-relaxed">
               Why this fits: SQL, Power BI and forecasting line up directly with this role. Located in {selectedJob.city}.
@@ -257,25 +259,25 @@ export default function PublicJobsPage() {
 
           {/* 4 Metadata Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div className="p-3 bg-[#F4F6F9] rounded-lg">
+            <div className="p-3 bg-[#F4F6F9] rounded-lg border border-[#E2E7EE]/60">
               <span className="text-[10px] uppercase font-bold text-[#5A6779] block">Salary</span>
               <span className="font-bold text-[#0B1C2F] tnum mt-0.5 block">
                 {selectedJob.salary_min_xaf.toLocaleString()} – {selectedJob.salary_max_xaf.toLocaleString()} XAF
               </span>
             </div>
-            <div className="p-3 bg-[#F4F6F9] rounded-lg">
+            <div className="p-3 bg-[#F4F6F9] rounded-lg border border-[#E2E7EE]/60">
               <span className="text-[10px] uppercase font-bold text-[#5A6779] block">Work Style</span>
               <span className="font-bold text-[#0B1C2F] mt-0.5 block capitalize">
                 {selectedJob.work_style} · 3d on-site
               </span>
             </div>
-            <div className="p-3 bg-[#F4F6F9] rounded-lg">
+            <div className="p-3 bg-[#F4F6F9] rounded-lg border border-[#E2E7EE]/60">
               <span className="text-[10px] uppercase font-bold text-[#5A6779] block">Experience</span>
               <span className="font-bold text-[#0B1C2F] mt-0.5 block">
                 {selectedJob.experience_level}
               </span>
             </div>
-            <div className="p-3 bg-[#F4F6F9] rounded-lg">
+            <div className="p-3 bg-[#F4F6F9] rounded-lg border border-[#E2E7EE]/60">
               <span className="text-[10px] uppercase font-bold text-[#5A6779] block">Apply By</span>
               <span className="font-bold text-[#0B1C2F] mt-0.5 block">
                 30 Nov 2026

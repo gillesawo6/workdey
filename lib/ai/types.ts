@@ -4,13 +4,17 @@
  * Career Coaching, Skill-Gap Analysis, Roadmap Generation, and CV Assistance.
  */
 
-export type AIProviderName = 'gemini' | 'anthropic' | 'openai' | 'mock';
+export type AIProviderName = 'openai' | 'gemini' | 'anthropic' | 'mock';
 
 export type AIModelName =
+  | 'gpt-4o'
+  | 'gpt-4o-mini'
+  | 'gpt-4-turbo'
+  | 'gpt-3.5-turbo'
   | 'gemini-3.8-flash'
   | 'gemini-2.5-flash'
   | 'gemini-3.1-flash-lite'
-  | 'gemini-4-argon';
+  | (string & {});
 
 export interface AIProviderConfig {
   provider: AIProviderName;
@@ -277,7 +281,12 @@ export interface RoadmapGenerateResult {
 export interface CVAssistRequest {
   cv_text: string;
   target_job_title?: string;
-  action: 'analyze_and_improve' | 'extract_skills' | 'generate_cover_letter';
+  action:
+    | 'analyze_and_improve'
+    | 'extract_skills'
+    | 'generate_cover_letter'
+    | 'tailor_for_job'
+    | 'match_with_job';
   company_name?: string;
   job_description?: string;
 }
